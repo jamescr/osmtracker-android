@@ -195,7 +195,7 @@ public abstract class ExportTrackTask extends AsyncTask<Void, Long, Boolean> {
 		}
 	}
 
-	private void exportTrackAsGpx(long trackId) throws ExportTrackException {
+	public void exportTrackAsGpx(long trackId) throws ExportTrackException {
 
 		String state = Environment.getExternalStorageState();
 		File sdRoot = Environment.getExternalStorageDirectory();
@@ -240,7 +240,7 @@ public abstract class ExportTrackTask extends AsyncTask<Void, Long, Boolean> {
 						null, TrackContentProvider.Schema.COL_TIMESTAMP + " asc");
 
 				if (null != cTrackPoints && null != cWayPoints) {
-					publishProgress(trackId, (long) cTrackPoints.getCount(), (long) cWayPoints.getCount());
+					//publishProgress(trackId, (long) cTrackPoints.getCount(), (long) cWayPoints.getCount());
 
 					try {
 						writeGpxFile(track_name, tags, track_description, cTrackPoints, cWayPoints, trackFile);
@@ -400,7 +400,7 @@ public abstract class ExportTrackTask extends AsyncTask<Void, Long, Boolean> {
 			fw.write(out.toString());
 
 			if (i % dialogUpdateThreshold == 0) {
-				publishProgress((long) dialogUpdateThreshold);
+				//publishProgress((long) dialogUpdateThreshold);
 			}
 		}
 
@@ -523,7 +523,7 @@ public abstract class ExportTrackTask extends AsyncTask<Void, Long, Boolean> {
 			fw.write(out.toString());
 
 			if (i % dialogUpdateThreshold == 0) {
-				publishProgress((long) dialogUpdateThreshold);
+				//publishProgress((long) dialogUpdateThreshold);
 			}
 		}
 	}
