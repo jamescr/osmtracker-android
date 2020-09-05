@@ -3,10 +3,8 @@ package net.osmtracker.gpx;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
@@ -40,22 +38,8 @@ public class ExportToStorageTaskTest {
 	@Rule // Storage permissions are required
 	public GrantPermissionRule writePermission = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-
 	@Before
 	public void setUp() throws Exception {
-		// Delete file entry in media library
-		mRule.getActivity().getContentResolver().delete(
-				MediaStore.Files.getContentUri("external"),
-				MediaStore.Files.FileColumns.DATA + " LIKE ?",
-				new String[] {"%/osmtracker/gpx-test"});
-
-		Cursor cursor = mRule.getActivity().managedQuery(
-				MediaStore.Files.getContentUri("external"),
-				null,
-				MediaStore.Files.FileColumns.DATA + " LIKE ?",
-				new String[] {"%/osmtracker/gpx-test"},
-				null);
-		Assert.assertEquals(0, cursor.getCount());
 
 		trackFile = new File(Environment.getExternalStorageDirectory(), "osmtracker/gpx-test.gpx");
 		if (trackFile.exists()) {
@@ -85,24 +69,9 @@ public class ExportToStorageTaskTest {
 
 		// Ensure file contents are OK
 		Assert.assertTrue(trackFile.exists());
-		System.out.println(readFully(new FileInputStream(trackFile)));
 		Assert.assertEquals(
 				readFully(InstrumentationRegistry.getContext().getAssets().open("gpx/gpx-test.gpx")),
 				readFully(new FileInputStream(trackFile)));
-
-		Cursor c = null;
-		c = mRule.getActivity().managedQuery(
-				MediaStore.Files.getContentUri("external"),
-				null,
-				MediaStore.Files.FileColumns.DATA + " LIKE ?",
-				new String[]{"%/osmtracker/gpx-test.gpx"},
-				null);
-		c.moveToFirst();
-
-		Assert.assertEquals(1, c.getCount());
-		Assert.assertEquals(0, c.getInt(c.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)));
-		Assert.assertEquals("gpx-test", c.getString(c.getColumnIndex(MediaStore.Files.FileColumns.TITLE)));
-
 	}
 
 	private static String readFully(InputStream is) throws IOException {
