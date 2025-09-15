@@ -19,6 +19,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0 # Required to count the commits
+
+      - name: Get new commits
+        run: echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' | wc -l)" >> $GITHUB_ENV
+
+      - name: Validates new commits
+        if: ${{ env.NEW_COMMIT_COUNT == 0 }}
+        run:
+          echo "No need to replace nightly build"
+          exit 1
 
       - name: Setup Java JDK
         uses: actions/setup-java@v4
@@ -34,7 +44,7 @@ jobs:
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Rename output APK
-        run: |
+        run:
           DATE=$(date +'%Y%m%d-%H%M')
           mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/OSMTracker-nightly-$DATE.apk
           echo "ARTIFACT_DATE=$DATE" >> $GITHUB_ENV
