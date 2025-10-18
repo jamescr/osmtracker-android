@@ -107,7 +107,7 @@
 	<string name="prefs_osm_clear_oauth_data_dialog">You\'ll have to authorize OSMTracker to upload tracks again. Are you sure?</string>
 	
 	<string name="prefs_map_tile">Map tile provider</string>
-	<string name="prefs_map_tile_summary"></string>
+	<string name="prefs_map_tile_summary">Choose a map tile provider</string>
 	<string-array name="prefs_map_tile_keys">
 		<item>Mapnik</item>
 		<item>CyclOSM</item>
