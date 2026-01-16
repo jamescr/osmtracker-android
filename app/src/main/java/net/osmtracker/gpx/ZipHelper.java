@@ -15,7 +15,7 @@ import net.osmtracker.db.DataHelper;
 
 public class ZipHelper {
 
-    private static final String TAG = "ZipHelper";
+    private static final String TAG = ZipHelper.class.getSimpleName();
 
     /**
      * Compresses all files associated with a track into a ZIP file.
@@ -49,7 +49,7 @@ public class ZipHelper {
                     if (!multimediaFile.getName().endsWith(DataHelper.EXTENSION_ZIP)) {
                         addFileToZip(multimediaFile, zos);
                     } else {
-                        Log.d(TAG, "Multimedia file: " + multimediaFile.getAbsolutePath() + " ignored. ");
+						Log.d(TAG,"Multimedia file: " + multimediaFile.getAbsolutePath() + " ignored. ");
                     }
                 } else {
                     Log.d(TAG, "Folder " + multimediaFile.getAbsolutePath() + " ignored. ");
@@ -68,15 +68,14 @@ public class ZipHelper {
      * Compresses track into a ZIP file.
      *
      * @param context   Application context.
-     * @param trackId   Track ID.
      * @param fileGPX   GPX file.
      * @return The created ZIP file or null if an error occurred.
      */
-    public static File zipGPXFile(Context context, long trackId, File fileGPX) {
+    public static File zipGPXFile(Context context, File fileGPX) {
 
         String name = fileGPX.getName();
-        File zipFile = new File(context.getCacheDir(),
-                name.substring(0, name.length() - 4) + DataHelper.EXTENSION_ZIP);
+		File zipFile = new File(context.getCacheDir(),
+				name.substring(0, name.lastIndexOf(".")) + DataHelper.EXTENSION_ZIP);
 
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
