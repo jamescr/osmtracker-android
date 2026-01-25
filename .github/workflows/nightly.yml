@@ -51,12 +51,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Signing Keystore
+        run: echo "${{ secrets.NIGHTLY_KEYSTORE }}" | base64 -d > app/nightly-keystore.jks
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace |
+          -Pandroid.injected.signing.store.file=app/keystore.jks \
+          -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+          -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+          -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+
+      - name: Cleanup Keystore
+        run: rm -f app/keystore.jks
 
       - name: Rename output APK
         run: |
