@@ -58,10 +58,7 @@ public class GPSLogger extends Service implements LocationListener {
 	 * Is GPS enabled ?
 	 */
 	private boolean isGpsEnabled = false;
-	/**
-	 * Minimum accuracy in meters for starting
-	 */
-	private int minAccuracy = 0;
+
 	/**
 	 * Precision of the accuracy in meters is satisfied ?
 	 */
@@ -103,6 +100,10 @@ public class GPSLogger extends Service implements LocationListener {
 	 */
 	private long gpsLoggingInterval;
 	private long gpsLoggingMinDistance;
+	/**
+	 * Minimum accuracy in meters for starting defined in the preferences
+	 */
+	private long gpsLoggingMinAccuracy;
 	
 	/**
 	 * sensors for magnetic orientation
@@ -257,22 +258,11 @@ public class GPSLogger extends Service implements LocationListener {
 				OSMTracker.Preferences.KEY_GPS_LOGGING_INTERVAL, OSMTracker.Preferences.VAL_GPS_LOGGING_INTERVAL)) * 1000;
 		gpsLoggingMinDistance = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).getString(
 				OSMTracker.Preferences.KEY_GPS_LOGGING_MIN_DISTANCE, OSMTracker.Preferences.VAL_GPS_LOGGING_MIN_DISTANCE));
+		gpsLoggingMinAccuracy = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).getString(
+				OSMTracker.Preferences.KEY_GPS_LOGGING_MIN_ACCURACY, OSMTracker.Preferences.VAL_GPS_LOGGING_MIN_ACCURACY));
 		use_barometer = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).getBoolean(
 				OSMTracker.Preferences.KEY_USE_BAROMETER, OSMTracker.Preferences.VAL_USE_BAROMETER);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-
-        try {
-            minAccuracy = Integer.parseInt(prefs.getString(
-                    OSMTracker.Preferences.KEY_GPS_MIN_ACCURACY,
-                    OSMTracker.Preferences.VAL_GPS_MIN_ACCURACY));
-        } catch (NumberFormatException e) {
-            minAccuracy = Integer.parseInt(OSMTracker.Preferences.VAL_GPS_MIN_ACCURACY);
-        }
-		// minimum precision enabled 
-		if (minAccuracy == 0) {
-			isAccuracySatisfied = true;
-		}
 		// Register our broadcast receiver
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(OSMTracker.INTENT_TRACK_WP);
@@ -365,7 +355,7 @@ public class GPSLogger extends Service implements LocationListener {
 		}
 		// Wait for minimum accuracy before starting
 		if(!isAccuracySatisfied){
-			if(location.hasAccuracy() && location.getAccuracy() <= minAccuracy){
+			if(location.hasAccuracy() && location.getAccuracy() <= gpsLoggingMinAccuracy){
 				// Precision achieved we unlocked the door and began recording this one and the following ones.
 				isAccuracySatisfied = true;
 			}
