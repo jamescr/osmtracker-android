@@ -56,7 +56,7 @@ jobs:
       - name: Run connected tests
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 26
+          api-level: 34
           script: |
             adb logcat &
             ./gradlew connectedCheck --no-parallel
