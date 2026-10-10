@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -37,7 +37,7 @@ jobs:
           echo "ARTIFACT_DATE=$DATE" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: debug-${{ env.ARTIFACT_DATE }}
           path: app/build/outputs/apk/debug/OSMTracker-debug-*.apk
